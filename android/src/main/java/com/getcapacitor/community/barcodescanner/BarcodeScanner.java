@@ -174,7 +174,6 @@ public class BarcodeScanner extends Plugin implements BarcodeCallback {
     }
 
     private void destroy() {
-        showBackground();
         dismantleCamera();
         this.setTorch(false);
     }
@@ -342,7 +341,8 @@ public class BarcodeScanner extends Plugin implements BarcodeCallback {
 
     @PluginMethod
     public void showBackground(PluginCall call) {
-        showBackground();
+        final Integer backgroundColor = call.getInt("backgroundColor", Color.WHITE);
+        showBackground(backgroundColor == null ? Color.WHITE : backgroundColor);
         call.resolve();
     }
 

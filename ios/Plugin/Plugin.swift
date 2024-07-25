@@ -66,7 +66,9 @@ public class BarcodeScanner: CAPPlugin, AVCaptureMetadataOutputObjectsDelegate {
     var didRunCameraSetup: Bool = false
     var didRunCameraPrepare: Bool = false
     var isBackgroundHidden: Bool = false
-    var previousBackgroundColor: UIColor? = UIColor.white
+    var previousOpacity: Bool?
+    var previousBackgroundColor: UIColor?
+    var previousScrollViewBgColor: UIColor?
 
     var savedCall: CAPPluginCall? = nil
     var scanningPaused: Bool = false
@@ -330,7 +332,9 @@ public class BarcodeScanner: CAPPlugin, AVCaptureMetadataOutputObjectsDelegate {
 
     private func hideBackground() {
         DispatchQueue.main.async {
+            self.previousOpacity = self.bridge?.webView?.isOpaque
             self.previousBackgroundColor = self.bridge?.webView!.backgroundColor
+            self.previousScrollViewBgColor = self.bridge?.webView!.scrollView.backgroundColor
 
             self.bridge?.webView!.isOpaque = false
             self.bridge?.webView!.backgroundColor = UIColor.clear
@@ -344,13 +348,13 @@ public class BarcodeScanner: CAPPlugin, AVCaptureMetadataOutputObjectsDelegate {
 
     private func showBackground() {
         DispatchQueue.main.async {
-            let javascript = "document.documentElement.style.backgroundColor = ''"
-
-            self.bridge?.webView!.evaluateJavaScript(javascript) { (result, error) in
-                self.bridge?.webView!.isOpaque = true
-                self.bridge?.webView!.backgroundColor = self.previousBackgroundColor
-                self.bridge?.webView!.scrollView.backgroundColor = self.previousBackgroundColor
+            if(self.previousOpacity!) {
+                let javascript = "document.documentElement.style.backgroundColor = ''"
+                self.bridge?.webView!.evaluateJavaScript(javascript)
             }
+            self.bridge?.webView!.isOpaque = self.previousOpacity!
+            self.bridge?.webView!.backgroundColor = self.previousBackgroundColor!
+            self.bridge?.webView!.scrollView.backgroundColor = self.previousScrollViewBgColor!
         }
     }
 

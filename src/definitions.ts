@@ -2,7 +2,7 @@ export type CallbackID = string;
 export interface BarcodeScannerPlugin {
   prepare(options?: ScanOptions): Promise<void>;
   hideBackground(): Promise<void>;
-  showBackground(): Promise<void>;
+  showBackground(options?: BackgroundOptions): Promise<void>;
   startScan(options?: ScanOptions): Promise<ScanResult>;
   startScanning(options?: ScanOptions, callback?: (result: ScanResult, err?: any) => void): Promise<CallbackID>;
   pauseScanning(): Promise<void>;
@@ -124,6 +124,11 @@ export interface StopScanOptions {
    * @since 2.1.0
    */
   resolveScan?: boolean;
+}
+
+export interface BackgroundOptions {
+  /** Android only. Defaults to -1 (Color.WHITE). Set to 0 if you want to keep transparent background */
+  backgroundColor?: number;
 }
 
 export type ScanResult = IScanResultWithContent | IScanResultWithoutContent;
